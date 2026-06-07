@@ -1,15 +1,18 @@
-# Contribution [#]: [Issue Title]
+# Contribution #486: Unify C++ translations for aie and aievec
 
-**Contribution Number:** [1 / 2 / 3]  
+**Contribution Number:**  1 
+
 **Student:** Sanjna Tailor
-**Issue:** [GitHub issue link]  
-**Status:** [Phase I / Phase II / Phase III / Phase IV] [In Progress / Complete]
+
+**Issue:** (https://github.com/Xilinx/mlir-aie/issues/486)
+
+**Status:** Phase I
 
 ---
 
 ## Why I Chose This Issue
 
-[1-2 paragraphs explaining why this issue interests you, how it matches your skills/learning goals, what you hope to learn]
+This issue interests me because it will test my understanding of C++ pipelines. I already have experience in C++, and I can extend it to other libraries within the language. This issue identifies duplicated functionality between two processes and aims to clean up the code by combining the duplicate code into a single translation pipeline. I hope to learn more about the product, mlir-aie, itself as well as how code pull requests are tested and integrated into open-source code bases.
 
 ---
 
