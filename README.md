@@ -1,18 +1,18 @@
-# Contribution #486: Unify C++ translations for aie and aievec
+# Contribution #7665:Poor Web layout
 
 **Contribution Number:**  1 
 
 **Student:** Sanjna Tailor
 
-**Issue:** (https://github.com/Xilinx/mlir-aie/issues/486)
+**Issue:** (https://github.com/transmission/transmission/issues/7665)
 
-**Status:** Phase I
+**Status:** Phase 2 Complete
 
 ---
 
 ## Why I Chose This Issue
 
-This issue interests me because it will test my understanding of C++ pipelines. I already have experience in C++, and I can extend it to other libraries within the language. This issue identifies duplicated functionality between two processes and aims to clean up the code by combining the duplicate code into a single translation pipeline. I hope to learn more about the product, mlir-aie, itself as well as how code pull requests are tested and integrated into open-source code bases.
+This issue interests me because it will test my understanding of C++ pipelines. I already have experience in C++, and I can extend it to other libraries within the language. This issue identifies UI problems within the web interface, leading to a decreased user experience. As I am interested in UI/UX, this issue is something I would have interest working on.
 
 ---
 
@@ -20,19 +20,19 @@ This issue interests me because it will test my understanding of C++ pipelines. 
 
 ### Problem Description
 
-[In your own words, what's broken or missing?]
+Text overflows designated DOM containers on the Web GUI
 
 ### Expected Behavior
 
-[What should happen?]
+This text should be styled such that they stay within their visual parent components
 
 ### Current Behavior
 
-[What actually happens?]
+The problem described is the current behavior
 
 ### Affected Components
 
-[Which parts of the codebase are involved?]
+The issue is in the web folder of the Transmission repository, within the transmission-app component
 
 ---
 
@@ -40,19 +40,21 @@ This issue interests me because it will test my understanding of C++ pipelines. 
 
 ### Environment Setup
 
-[Notes on setting up your local development environment - challenges you faced, how you solved them]
+I installed dependencies as listed in the ReadMe.md and Building-Transmission.md files. I had some issues with downloading dependencies, however resoloved them with claude
 
 ### Steps to Reproduce
-
-1. [Step 1]
-2. [Step 2]
-3. [Observed result]
+1. Run a transmission-daemon to have a live RPC endpoint, and start the web dev server (cd web && npm install && npm run dev)
+2. Open the Web client in chrome browser and change window size to 14" macOS
+3. Narrow the torrent-list column, triggering the bug
+4. Render long strings in the metric fields
+   a. Add a few large torrents, actively downloading at high speed with many peers and a long ETA
+   b. temporarily edit the row text to a long string to force the condition. 
 
 ### Reproduction Evidence
 
-- **Commit showing reproduction:** [Link to commit in your fork]
+- **Commit showing reproduction:** [reproduction commit](https://github.com/SanjnaT41756/transmission/commit/ee9fd14aa28d6f623069562fb8273be57bf57af4)
 - **Screenshots/logs:** [If applicable]
-- **My findings:** [What you discovered during reproduction]
+- **My findings:** I found that this issue is persistent across window/screen sizes
 
 ---
 
@@ -60,24 +62,27 @@ This issue interests me because it will test my understanding of C++ pipelines. 
 
 ### Analysis
 
-[Your analysis of the root cause - what's causing the issue?]
+The overflow comes from two layers. The rendering layer produces variable-length text. web/src/formatter.js holds the humanizing functions (size, speedBps/speed, percentString, timeInterval, mem, ratioString) that return strings. Their lengths vary widely with no fixed-width or padding contract. web/src/torrent-row.js (the TorrentRendererFull/TorrentRendererCompact classes) writes these strings into the row's child elements via textContent on every refresh, so the metric line's width fluctuates with the data.
+The layout layer is why that text escapes its box. In web/assets/css/transmission-app.scss, the metric containers (.torrent-peer-details, .torrent-progress-details, and the surrounding .torrent flex row) lack the standard "shrink-and-clip" styling.
 
 ### Proposed Solution
 
-[High-level description of your fix approach]
+CSS: make the metric containers behave as properly constrained flex items. Add min-width: 0 to the flex children holding dynamic text, apply overflow: hidden; text-overflow: ellipsis; white-space: nowrap to the metric text so over-long values clip with an ellipsis, right-align the numeric block within its parent, add a small right-padding buffer, and set font-variant-numeric: tabular-nums (or a monospace family) on metric text so digit widths stay stable and the line doesn't expand as numbers update.
+JS: normalize the formatter functions to a consistent width, so the produced strings stop varying in length.
 
 ### Implementation Plan
 
 Using UMPIRE framework (adapted):
 
-**Understand:** [Restate the problem]
+**Understand:**  The web client's dynamic metric fields (size, speed, ETA, peer counts) overflow their element boundaries (text spills outside the row) most visibly on narrow laptop viewports in Chromium. The fields are plain text nodes whose length varies with the data, sitting in flex containers that neither shrink nor clip.
 
-**Match:** [What similar patterns/solutions exist in the codebase?]
+**Match:**  apply that same ellipsis/min-width: 0 treatment to the metric containers as is present in other components in transmission-app.scss
 
 **Plan:** [Step-by-step implementation plan]
-1. [Modify file X to do Y]
-2. [Add function Z]
-3. [Update tests]
+1. In web/assets/css/transmission-app.scss, add min-width: 0 to the flex children of .torrent that hold dynamic text, and overflow: hidden; text-overflow: ellipsis; white-space: nowrap to .torrent-peer-details / .torrent-progress-details; right-align the metric block, add a right-padding buffer, and apply font-variant-numeric: tabular-nums to metric text. Mirror the existing .torrent-name truncation pattern.
+2. In web/src/formatter.js, normalize the humanizing functions to a consistent precision and unit-spacing contract so string lengths stabilize.
+3. Add/extend unit tests for formatter.js covering boundary inputs to lock in the consistent formatting; follow the existing web test runner's pattern.
+4. Rebuild the served artifacts (compile SCSS with rsass, bundle with esbuild to web/public_html/transmission-app.js) and confirm the change appears in the bundle
 
 **Implement:** [Link to your branch/commits as you work]
 
