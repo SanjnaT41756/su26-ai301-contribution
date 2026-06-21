@@ -6,7 +6,7 @@
 
 **Issue:** (https://github.com/transmission/transmission/issues/7665)
 
-**Status:** Phase 2 Complete
+**Status:** Phase 3 Complete
 
 ---
 
@@ -81,14 +81,13 @@ Using UMPIRE framework (adapted):
 **Plan:** [Step-by-step implementation plan]
 1. In web/assets/css/transmission-app.scss, add min-width: 0 to the flex children of .torrent that hold dynamic text, and overflow: hidden; text-overflow: ellipsis; white-space: nowrap to .torrent-peer-details / .torrent-progress-details; right-align the metric block, add a right-padding buffer, and apply font-variant-numeric: tabular-nums to metric text. Mirror the existing .torrent-name truncation pattern.
 2. In web/src/formatter.js, normalize the humanizing functions to a consistent precision and unit-spacing contract so string lengths stabilize.
-3. Add/extend unit tests for formatter.js covering boundary inputs to lock in the consistent formatting; follow the existing web test runner's pattern.
 4. Rebuild the served artifacts (compile SCSS with rsass, bundle with esbuild to web/public_html/transmission-app.js) and confirm the change appears in the bundle
 
-**Implement:** [Link to your branch/commits as you work]
+**Implement:** [[Link to fix branch]](https://github.com/SanjnaT41756/transmission/tree/7665-fix-text-layout)
 
-**Review:** [Self-review checklist - does it follow the project's contribution guidelines?]
+**Review:** This fix follows the stylistic contribution guidelines: KISS, running ./code_style.sh to ensure uniform formatting, and using commonly-used tools
 
-**Evaluate:** [How will you verify it works?]
+**Evaluate:** As there is no formal testing code for this visual change, I will be manually testing.
 
 ---
 
@@ -96,36 +95,37 @@ Using UMPIRE framework (adapted):
 
 ### Unit Tests
 
-- [ ] Test case 1: [Description]
-- [ ] Test case 2: [Description]
-- [ ] Test case 3: [Description]
+- Not Applicable
 
 ### Integration Tests
 
-- [ ] Integration scenario 1
-- [ ] Integration scenario 2
+- Not Applicable
 
 ### Manual Testing
 
-[What you tested manually and results]
+Environment: built via npm run dev (esbuild watch) against a running transmission-daemon, viewed at the served web UI in a Chromium browser on Windows; viewport width varied via window resize and DevTools device toolbar.
+
+ - Reproduced the bug on the unpatched build
+ - Confirmed the fix in full (non-compact) view with same width and torrents: metric text now stays within the row, wrapping inside its column instead of overflowing
+ - Confirmed the fix in compact view; Checked long values in those fields using the DevTools console
 
 ---
 
 ## Implementation Notes
 
-### Week [X] Progress
+### Week [3] Progress
 
-[What you built this week, challenges faced, decisions made]
+I worked on updating the CSS files of the web interface, getting rid of duplicates and styles that were being overwritten. Then I worked on the fix to the SCSS grid.
 
-### Week [Y] Progress
+### Week [4] Progress
 
-[Continue documenting as you work]
+I continued on working on the visual fix while keeping in mind the dependencies and style guides for writing code. Only one file actually needed to be changed (rather than 2 that was outlined in the steps), where I had to modify an existing text styling rule
 
 ### Code Changes
 
-- **Files modified:** [List]
-- **Key commits:** [Links to important commits]
-- **Approach decisions:** [Why you chose certain approaches]
+- **Files modified:** transmission/web/assets/css/transmission-app.scss
+- **Key commits:** [key commit](https://github.com/SanjnaT41756/transmission/commit/9ba9f7df499e0a6e673881f9c3f223a5508629c5)
+- **Approach decisions:** This was the easiest way to fix this issue without touching other files unnecessarily. This follows the "KISS" consideration mentioned in the contribution guide for the repository: "Keep It Short and Simple".
 
 ---
 
