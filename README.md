@@ -6,7 +6,7 @@
 
 **Issue:** (https://github.com/transmission/transmission/issues/7665)
 
-**Status:** Phase 3 Complete
+**Status:** Phase 4 Complete
 
 ---
 
@@ -131,15 +131,21 @@ I continued on working on the visual fix while keeping in mind the dependencies 
 
 ## Pull Request
 
-**PR Link:** [GitHub PR URL when submitted]
+**PR Link:** [[GitHub PR](https://github.com/transmission/transmission/pull/8946)
 
-**PR Description:** [Draft or final PR description - much of the content above can be adapted]
+**PR Description:** Notes: Fixes the overflow of text in the web client
 
-**Maintainer Feedback:**
+What does this PR do?
+fixes torrent-progress.scss to avoid text overflow.
+
+The .torrent grid's peer/progress detail elements kept overflowing: visible, giving them a grid automatic-minimum-size equal to their min-content width. Long speed/size/ETA/peer strings therefore forced the middle 'auto' column (and the whole grid) wider than the row, so text spilled past the element boundary. Add min-width:0 + overflow: hidden + text-overflow: ellipsis, matching the existing .torrent-name and .torrent-labels rules, so the items shrink and clip instead.
+
+
+**Maintainer Feedback: Awaiting Review**
 - [Date]: [Summary of feedback received]
 - [Date]: [How you addressed it]
 
-**Status:** [Awaiting review / Iterating / Approved / Merged]
+**Status:** [**Awaiting review** / Iterating / Approved / Merged]
 
 ---
 
