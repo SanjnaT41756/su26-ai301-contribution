@@ -153,20 +153,19 @@ The .torrent grid's peer/progress detail elements kept overflowing: visible, giv
 
 ### Technical Skills Gained
 
-[What you learned technically]
+The main lesson I learned is that CSS Grid and Flex items don't shrink by default, so a long unbreakable string forces its track wider than the container and spills over. Setting overflow to anything other than visible resets that automatic minimum to zero, which is what lets an item shrink and then clip or ellipsize. Its good to understand this general layout principle that is applicable in any web development environment.
+I also learned to read a bug against the code's own conventions. The fix was essentially copying the overflow: hidden; text-overflow: ellipsis code that .torrent-name and .torrent-labels rules already used. Beyond that, I got hands-on with the project's build pipeline — SCSS compiled with rsass, the app bundled with esbuild, and the daemon serving whatever TRANSMISSION_WEB_HOME points at.
 
 ### Challenges Overcome
 
-[What was hard and how you solved it]
+The biggest challenge was finding the source of the bug within this big project. My first hypothesis assumed a flexbox layout and the standard flex min-width: 0 fix. Once I read the actual transmission-app.scss, it turned out to be a CSS Grid. The other challenge was with my development environment. On Windows PowerShell the npm run dev script failed because DEV=true node is Unix env-var syntax, which I worked around with $env:DEV="true".
 
 ### What I'd Do Differently Next Time
 
-[Reflection on your process]
+I would try to get more intuition from the code maintainers next time I work on an open source issue, because some code conventions are unique to the project. With this I can figure out more viable testing measures for checking the effectiveness of the code changes.
 
 ---
 
 ## Resources Used
 
-- [Link to helpful documentation]
-- [Tutorial or Stack Overflow post that helped]
-- [GitHub issues or discussions that helped]
+Transmission web client build/run docs — https://github.com/transmission/transmission/blob/main/web/README.md (the rsass + esbuild build steps, npm run dev, and running at localhost:9000)
