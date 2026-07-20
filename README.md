@@ -142,8 +142,9 @@ The .torrent grid's peer/progress detail elements kept overflowing: visible, giv
 
 
 **Maintainer Feedback: Awaiting Review**
-- [Date]: [Summary of feedback received]
-- [Date]: [How you addressed it]
+- [June 25, 2026]: pr submitted, maintainer tagged, waiting for review
+- [July 9, 2026]: Still waiting for review
+
 
 **Status:** [**Awaiting review** / Iterating / Approved / Merged]
 
