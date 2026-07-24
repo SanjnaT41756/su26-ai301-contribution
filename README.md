@@ -95,11 +95,11 @@ Using UMPIRE framework (adapted):
 
 ### Unit Tests
 
-- Not Applicable
+Not applicable. The change modifies only CSS grid sizing (min-width, overflow, text-overflow). jsdom performs no layout, so unit tests cannot observe overflow or clipping. No JavaScript logic (formatter.js, torrent-row.js) was changed, so existing unit coverage remains valid and unaffected.
 
 ### Integration Tests
 
-- Not Applicable
+A browser-rendered test that reproduces the overflow condition and asserts it no longer occurs, exercising the fix directly. placed at web/tests/torrent-row-overflow.spec.js to **match existing tests**; build the CSS first (rsass assets/css/transmission-app.scss > assets/css/transmission-app.css) since the test loads the compiled output. **Existing test suite still passes**.
 
 ### Manual Testing
 
