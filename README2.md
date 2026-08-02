@@ -6,7 +6,7 @@
 
 **Issue:** [GitHub issue link ](https://github.com/opentiny/tiny-vue/issues/3078)
 
-**Status:** [ **Phase I ** / Phase II / Phase III / Phase IV] **[In Progress** / Complete]
+**Status:** [ Phase I / **Phase II** / Phase III / Phase IV] **[In Progress** / Complete]
 
 ---
 
@@ -43,20 +43,35 @@ What I hope to get out of it is a deeper grasp of the Vue 3 reactivity model. I'
 ## Reproduction Process
 
 ### Environment Setup
-
-[Notes on setting up your local development environment - challenges you faced, how you solved them]
+- Cloned `opentiny/tiny-vue`, checked out `dev` branch.
+- Repo uses pnpm workspaces, so `pnpm i` is required 
+- Ran `pnpm dev` to start the Vue 3 PC playground at http://127.0.0.1:7130/
+- No special environment issues encountered beyond needing the correct package manager (pnpm) and Node version specified in `package.json`.
 
 ### Steps to Reproduce
-
-1. [Step 1]
-2. [Step 2]
-3. [Observed result]
+1. Add a test page/component that renders `<tiny-qr-code>` bound to reactive `size`, `icon-size`, and `color` refs, e.g.:
+```vue
+   <template>
+     <tiny-qr-code :value="value" :size="size" :icon-size="iconSize" :color="color" />
+     <button @click="size += 20">Increase size</button>
+     <button @click="color = '#ff0000'">Change color</button>
+   </template>
+   <script setup>
+   import { ref } from 'vue'
+   import { QrCode as TinyQrCode } from '@opentiny/vue'
+   const value = ref('https://opentiny.design/tiny-vue')
+   const size = ref(150)
+   const iconSize = ref(30)
+   const color = ref('#000000')
+   </script>
+```
+2. Click the buttons to change `size`, `iconSize`, and `color` after the QR code has initially rendered.
+3. Observed result: the QR code does not visually update — it keeps the size/icon size/color from the first render, even though the underlying refs have changed. Re-mounting the component (e.g. via `v-if` toggle or `:key` change) does pick up the new values, confirming the props aren't wired into a reactive watcher/computed inside the component and are likely only read once on initial canvas draw.
 
 ### Reproduction Evidence
-
-- **Commit showing reproduction:** [Link to commit in your fork]
-- **Screenshots/logs:** [If applicable]
-- **My findings:** [What you discovered during reproduction]
+- **Commit showing reproduction:** (https://github.com/opentiny/tiny-vue/commit/a543e78c3ecd3d73c1ddbc3620e02d02bf1bcd19)
+- **Screenshots/logs:** N/A
+- **My findings:** The props are likely consumed only inside a one-time draw/init function (e.g. an `onMounted` or initial `watch(..., { immediate: true })` without the prop in its dependency, or a canvas-draw function not re-invoked on prop change) rather than a reactive `watch`/`watchEffect` that re-triggers the canvas redraw whenever `size`, `iconSize`, or `color` change.
 
 ---
 
